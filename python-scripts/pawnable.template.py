@@ -1,17 +1,18 @@
 from pwn import *
 
 # ------------------- CONFIG -------------------
-CHALLENGE_NAME = 'fd'                  # change to match the challenge folder
-PASSWORD = 'guest'                     # change if needed
+CHALLENGE_NAME = ''  # change to match the challenge folder
+PASSWORD = 'guest'      # change if needed
 PORT = 2222
 HOST = 'pwnable.kr'
-BINARY_PATH = f'./{CHALLENGE_NAME}'    # binary to execute
+BINARY_PATH = f'./{CHALLENGE_NAME}'  # binary to execute
 
-USE_SSH = True                         # False if local only
-USE_GDB = False                        # Set to True to enable GDB
+USE_SSH = True    # False if local only
+USE_GDB = False   # Set to True to enable GDB
 
-ENV = {"PATH": "/bin:/usr/bin"}        # in case PATH is needed
+ENV = {"PATH": "/bin:/usr/bin"}  # in case PATH is needed
 # ---------------------------------------------
+
 
 def start_process(ssh_session=None):
     if ssh_session:
@@ -19,12 +20,14 @@ def start_process(ssh_session=None):
     else:
         return process(BINARY_PATH)
 
+
 def attach_debugger(proc):
     if USE_GDB:
         gdb.attach(proc, '''
             b main
             c
         ''')
+
 
 def main():
     if USE_SSH:
@@ -38,16 +41,21 @@ def main():
     attach_debugger(p)
 
     # ---------------- EXPLOIT GOES HERE ----------------
-    # Examples:
-    # p.sendline('4660')
-    # p.send(b'A' * 64 + b'\xef\xbe\xad\xde')
+    payload = b''
+    p.sendline(payload)
 
-    # Print banner or first output lines
-    print(p.recvline(timeout=1).decode(errors='ignore'))
+    # Print banner or first output lines safely
+    try:
+        output = p.recvline(timeout=1)
+        if output:
+            print(output.decode(errors='ignore'))
+    except EOFError:
+        pass
 
     # Start interactive session
     p.interactive()
     # ---------------------------------------------------
+
 
 if __name__ == "__main__":
     main()

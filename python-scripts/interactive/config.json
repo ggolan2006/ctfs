@@ -1,0 +1,8 @@
+{
+  "challenge_name": "bof",
+  "host": "pwnable.kr",
+  "user": "bof",
+  "password": "guest",
+  "port": 2222,
+  "binary": "./bof"
+}
